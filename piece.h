@@ -2,6 +2,7 @@
 #define PIECE_H
 
 #include <stdbool.h>
+#include <stddef.h> // size_t
 
 typedef enum pieces {
      EMPTY, PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING
@@ -11,7 +12,7 @@ enum PieceCount {
      PAWN_COUNT = 8, ROOK_COUNT = 2, KNIGHT_COUNT = 2, BISHOP_COUNT = 2, QUEEN_COUNT = 1, KING_COUNT = 1
 };
 
-int getPieceCount(PieceType type);
+size_t getPieceCount(PieceType type);
 
 typedef enum color {
      BLACK, WHITE   
@@ -51,6 +52,8 @@ typedef struct {
      Piece boardArray[8][8];
      Color currentTurn;
      bool isGameEnded;
+     bool isWhiteChecked;
+     bool isBlackChecked;
 } Board;
 
 typedef char Message[100];

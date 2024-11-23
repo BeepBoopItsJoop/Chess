@@ -1,8 +1,8 @@
 #include "piece.h"
-#include "stdio.h"
+#include <stdio.h>
 
-int getPieceCount(PieceType type) {
-     const int pieceCount[] = {0, PAWN_COUNT, ROOK_COUNT, KNIGHT_COUNT, BISHOP_COUNT, QUEEN_COUNT, KING_COUNT};
+size_t getPieceCount(PieceType type) {
+     const size_t pieceCount[] = {0, PAWN_COUNT, ROOK_COUNT, KNIGHT_COUNT, BISHOP_COUNT, QUEEN_COUNT, KING_COUNT};
      if (type < EMPTY || type > KING) return 0;
      return (pieceCount[type]);
 }
