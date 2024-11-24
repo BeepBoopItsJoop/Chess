@@ -5,20 +5,20 @@
 #include <stdio.h>
 
 
-bool checkValidMovePawn(Board *chessBoard, Move m, Message message)
+bool checkValidMovePawn(const Board *chessBoard, Move m, Message message)
 {
      // For readability
-     Piece *startPiece = getPieceAt(chessBoard, m.start.X, m.start.Y);
-     Piece *endPiece = getPieceAt(chessBoard, m.end.X, m.end.Y);
+     Piece startPiece = getPieceAt(chessBoard, m.start.X, m.start.Y);
+     Piece endPiece = getPieceAt(chessBoard, m.end.X, m.end.Y);
 
      // Account which way is forward (black or white)
-     int forward = (startPiece->isWhite ? 1 : -1);
+     int forward = (startPiece.isWhite ? 1 : -1);
 
      // If Forward 1 move
      if ((m.end.X == m.start.X) && (m.end.Y - m.start.Y == (1 * forward)))
      {
           // Check if piece is there
-          if (endPiece->type != EMPTY)
+          if (endPiece.type != EMPTY)
           {
                sprintf(message, "%s", "Invalid move: Piece in the way\n");
                return false;
@@ -31,19 +31,19 @@ bool checkValidMovePawn(Board *chessBoard, Move m, Message message)
      {
           // Check if starting position
           if (!
-          (startPiece->isWhite && m.start.Y == 2 || !startPiece->isWhite && m.start.Y == 7))
+          (startPiece.isWhite && m.start.Y == 2 || !startPiece.isWhite && m.start.Y == 7))
           {
                sprintf(message, "%s", "Invalid move: Pawn must be in starting location to move 2 squares forward\n");
                return false;
           }
           // check if piece is directly infront
-          if (getPieceAt(chessBoard, m.end.X, m.start.Y + (1 * forward))->type != EMPTY)
+          if (getPieceAt(chessBoard, m.end.X, m.start.Y + (1 * forward)).type != EMPTY)
           {
                sprintf(message, "%s", "Invalid move: Piece directly infront\n");
                return false;
           }
           // Check if piece is there
-          if (endPiece->type != EMPTY)
+          if (endPiece.type != EMPTY)
           {
                sprintf(message, "%s", "Invalid move: Piece already there\n");
                return false;
@@ -55,13 +55,13 @@ bool checkValidMovePawn(Board *chessBoard, Move m, Message message)
      if ((abs(m.end.X - m.start.X) == 1) && (abs(m.end.Y - m.start.Y) == 1))
      {
           // Check if there is a piece there
-          if (endPiece->type == EMPTY)
+          if (endPiece.type == EMPTY)
           {
                sprintf(message, "%s", "Invalid move: There is no piece to take\n");
                return false;
           }
           // Check if piece is same team
-          if (endPiece->isWhite == startPiece->isWhite)
+          if (endPiece.isWhite == startPiece.isWhite)
           {
                sprintf(message, "%s", "Invalid move: Piece of same colour is there\n");
                return false;
@@ -73,11 +73,11 @@ bool checkValidMovePawn(Board *chessBoard, Move m, Message message)
      sprintf(message, "%s", "Invalid move: Pawn can't move that way\n");
      return false;
 }
-bool checkValidMoveRook(Board *chessBoard, Move m, Message message)
+bool checkValidMoveRook(const Board *chessBoard, Move m, Message message)
 {
      // For readability
-     Piece *startPiece = getPieceAt(chessBoard, m.start.X, m.start.Y);
-     Piece *endPiece = getPieceAt(chessBoard, m.end.X, m.end.Y);
+     Piece startPiece = getPieceAt(chessBoard, m.start.X, m.start.Y);
+     Piece endPiece = getPieceAt(chessBoard, m.end.X, m.end.Y);
 
      if (m.start.X != m.end.X && m.start.Y != m.end.Y)
      {
@@ -92,7 +92,7 @@ bool checkValidMoveRook(Board *chessBoard, Move m, Message message)
           // i != endX - Check every square except the last one
           for (size_t x = m.start.X + direction; x != m.end.X; x += direction)
           {
-               if (getPieceAt(chessBoard, x, m.start.Y)->type != EMPTY)
+               if (getPieceAt(chessBoard, x, m.start.Y).type != EMPTY)
                {
                     sprintf(message, "%s", "Invalid move: There is a piece in the way\n");
                     return false;
@@ -106,7 +106,7 @@ bool checkValidMoveRook(Board *chessBoard, Move m, Message message)
           // i != endY - Check every square except the last one
           for (size_t y = m.start.Y + direction; y != m.end.Y; y += direction)
           {
-               if (getPieceAt(chessBoard, m.start.X, y)->type != EMPTY)
+               if (getPieceAt(chessBoard, m.start.X, y).type != EMPTY)
                {
                     sprintf(message, "%s", "Invalid move: There is a piece in the way\n");
                     return false;
@@ -115,7 +115,7 @@ bool checkValidMoveRook(Board *chessBoard, Move m, Message message)
      }
 
      // Check if there is a piece at the end that can be taken
-     if (endPiece->type != EMPTY && endPiece->isWhite == startPiece->isWhite)
+     if (endPiece.type != EMPTY && endPiece.isWhite == startPiece.isWhite)
      {
           sprintf(message, "%s", "Invalid move: Can't take same team's piece\n");
           return false;
@@ -123,11 +123,11 @@ bool checkValidMoveRook(Board *chessBoard, Move m, Message message)
 
      return true;
 }
-bool checkValidMoveKnight(Board *chessBoard, Move m, Message message)
+bool checkValidMoveKnight(const Board *chessBoard, Move m, Message message)
 {
      // For readability
-     Piece *startPiece = getPieceAt(chessBoard, m.start.X, m.start.Y);
-     Piece *endPiece = getPieceAt(chessBoard, m.end.X, m.end.Y);
+     Piece startPiece = getPieceAt(chessBoard, m.start.X, m.start.Y);
+     Piece endPiece = getPieceAt(chessBoard, m.end.X, m.end.Y);
 
      // -+2x && -+1y || -=1x -+2y
      if (!(
@@ -139,7 +139,7 @@ bool checkValidMoveKnight(Board *chessBoard, Move m, Message message)
      }
 
      // Check if there is a piece at the end that can be taken
-     if (endPiece->type != EMPTY && endPiece->isWhite == startPiece->isWhite)
+     if (endPiece.type != EMPTY && endPiece.isWhite == startPiece.isWhite)
      {
           sprintf(message, "%s", "Invalid move: Can't take same team's piece\n");
           return false;
@@ -147,11 +147,11 @@ bool checkValidMoveKnight(Board *chessBoard, Move m, Message message)
 
      return true;
 }
-bool checkValidMoveBishop(Board *chessBoard, Move m, Message message)
+bool checkValidMoveBishop(const Board *chessBoard, Move m, Message message)
 {
      // For readability
-     Piece *startPiece = getPieceAt(chessBoard, m.start.X, m.start.Y);
-     Piece *endPiece = getPieceAt(chessBoard, m.end.X, m.end.Y);
+     Piece startPiece = getPieceAt(chessBoard, m.start.X, m.start.Y);
+     Piece endPiece = getPieceAt(chessBoard, m.end.X, m.end.Y);
 
      if (abs(m.end.X - m.start.X) != abs(m.end.Y - m.start.Y))
      {
@@ -166,7 +166,7 @@ bool checkValidMoveBishop(Board *chessBoard, Move m, Message message)
      int y = m.start.Y + yDirection;
      while (x != m.end.X && y != m.end.Y)
      {
-          if (getPieceAt(chessBoard, x, y)->type != EMPTY)
+          if (getPieceAt(chessBoard, x, y).type != EMPTY)
           {
                
                sprintf(message, "%s", "Invalid move: There is a piece in the way\n");
@@ -176,7 +176,7 @@ bool checkValidMoveBishop(Board *chessBoard, Move m, Message message)
           y += yDirection;
      }
 
-     if (endPiece->type != EMPTY && endPiece->isWhite == startPiece->isWhite)
+     if (endPiece.type != EMPTY && endPiece.isWhite == startPiece.isWhite)
      {
           sprintf(message, "%s", "Invalid move: Can't take same team's piece\n");
           return false;
@@ -184,11 +184,11 @@ bool checkValidMoveBishop(Board *chessBoard, Move m, Message message)
 
      return true;
 }
-bool checkValidMoveKing(Board *chessBoard, Move m, Message message)
+bool checkValidMoveKing(const Board *chessBoard, Move m, Message message)
 {
      // For readability
-     Piece *startPiece = getPieceAt(chessBoard, m.start.X, m.start.Y);
-     Piece *endPiece = getPieceAt(chessBoard, m.end.X, m.end.Y);
+     Piece startPiece = getPieceAt(chessBoard, m.start.X, m.start.Y);
+     Piece endPiece = getPieceAt(chessBoard, m.end.X, m.end.Y);
 
      if (abs(m.end.X - m.start.X) > 1 || abs(m.end.Y - m.start.Y) > 1)
      {    
@@ -197,7 +197,7 @@ bool checkValidMoveKing(Board *chessBoard, Move m, Message message)
           return false;
      }
 
-     if (endPiece->type != EMPTY && endPiece->isWhite == startPiece->isWhite)
+     if (endPiece.type != EMPTY && endPiece.isWhite == startPiece.isWhite)
      {
           sprintf(message, "%s", "Invalid move: Can't take same team's piece\n");
           // printf("%s", "Invalid move: Can't take same team's piece\n");
@@ -206,11 +206,11 @@ bool checkValidMoveKing(Board *chessBoard, Move m, Message message)
 
      return true;
 }
-bool checkValidMoveQueen(Board *chessBoard, Move m, Message message)
+bool checkValidMoveQueen(const Board *chessBoard, Move m, Message message)
 {
      // For readability
-     Piece *startPiece = getPieceAt(chessBoard, m.start.X, m.start.Y);
-     Piece *endPiece = getPieceAt(chessBoard, m.end.X, m.end.Y);
+     Piece startPiece = getPieceAt(chessBoard, m.start.X, m.start.Y);
+     Piece endPiece = getPieceAt(chessBoard, m.end.X, m.end.Y);
 
      // Check move type(horizontal, vertical, or diagonal)
      if (m.start.X != m.end.X && m.start.Y != m.end.Y && abs(m.end.X - m.start.X) != abs(m.end.Y - m.start.Y))
@@ -230,7 +230,7 @@ bool checkValidMoveQueen(Board *chessBoard, Move m, Message message)
      int y = m.start.Y + yDirection;
      while (x != m.end.X || y != m.end.Y)
      {
-          if (getPieceAt(chessBoard, x, y)->type != EMPTY)
+          if (getPieceAt(chessBoard, x, y).type != EMPTY)
           {
                sprintf(message, "%s", "Invalid move: There is a piece in the way\n");
                return false;
@@ -240,7 +240,7 @@ bool checkValidMoveQueen(Board *chessBoard, Move m, Message message)
      }
 
      // Check end position for same-team piece
-     if (endPiece->type != EMPTY && endPiece->isWhite == startPiece->isWhite)
+     if (endPiece.type != EMPTY && endPiece.isWhite == startPiece.isWhite)
      {
           sprintf(message, "%s", "Invalid move: Can't take same team's piece\n");
           return false;
@@ -249,24 +249,24 @@ bool checkValidMoveQueen(Board *chessBoard, Move m, Message message)
      return true;
 }
 
-bool checkValidMove(Board *chessBoard, Move move, Message message)
+bool checkValidMove(const Board *chessBoard, Move move, Message message)
 {
      if(message == NULL) {
-          fprintf(stderr, "%s", "Error: Invalid message buffer supplied as argument\n");
+          sprintf(message, "%s", "Error: Invalid message buffer supplied as argument\n");
      }
 
      message[0] = '\0';
      
      if (chessBoard == NULL)
      {
-          fprintf(stderr, "%s", "Error: Invalid chess board.\n");
+          sprintf(message, "%s", "Error: Invalid chess board.\n");
           return false;
      }
 
      if (!checkValidPos(move.start) ||
          !checkValidPos(move.end))
      {
-          fprintf(stderr, "%s", "Error: Move out of bounds.\n");
+          sprintf(message, "%s", "Error: Move out of bounds.\n");
           return false;
      }
 
@@ -275,8 +275,8 @@ bool checkValidMove(Board *chessBoard, Move move, Message message)
           return false;
      }
 
-     Piece *startPiece = getPieceAt(chessBoard, move.start.X, move.start.Y);
-     switch (startPiece->type)
+     Piece startPiece = getPieceAt(chessBoard, move.start.X, move.start.Y);
+     switch (startPiece.type)
      {
      case (PAWN):
           return checkValidMovePawn(chessBoard, move, message);

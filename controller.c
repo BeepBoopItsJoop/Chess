@@ -46,12 +46,12 @@ void movePiece(Board *chessBoard, Move move, Message message)
      *startPiece = (Piece){0};
 }
 
-Pos findNthPiece(Board *chessBoard, PieceType type, int n) {
+Pos findNthPiece(const Board *chessBoard, PieceType type, int n) {
     int count = 0;
     for (size_t y = 1; y < 9; y++) {
         for (size_t x = 1; x < 9; x++) {
-            Piece* piece = getPieceAt(chessBoard, x, y);
-            if (piece->type == type && piece->isWhite == chessBoard->currentTurn) {
+            Piece piece = getPieceAt(chessBoard, x, y);
+            if (piece.type == type && piece.isWhite == chessBoard->currentTurn) {
                 if (++count == n) {
                     return (Pos){x, y};
                 }
@@ -61,7 +61,7 @@ Pos findNthPiece(Board *chessBoard, PieceType type, int n) {
     return (Pos){-1, -1};  // Not enough matches found
 }
 
-bool isSquareContested(Board* board, Pos square, Message message) {
+bool isSquareContested(const Board* board, Pos square, Message message) {
      for (size_t y = 1; y < 9; y++) {
           for (size_t x = 1; x < 9; x++)
           {
@@ -93,7 +93,7 @@ bool playMove(Board *chessBoard, Move move, Message message)
      return true;
 }
 
-Move getInputMove(Board* board, Message buffer) {
+Move getInputMove(const Board* board, Message buffer) {
      // Ask for an input that is a valid move 
      Prompt input;
      Pos start;
@@ -112,21 +112,70 @@ Move getInputMove(Board* board, Message buffer) {
      return createMove(start.X, start.Y, input.file, input.rank);
 }
 
-void gameRound(Board *chessBoard, Message message, Move move)
+void gameRound(Board *board, Message message, Move move)
 {
-     if (chessBoard == NULL)
+     if (board == NULL)
      {
           fprintf(stderr, "Error: Invalid chess board.\n");
           return;
      }
 
 
-     if(!playMove(chessBoard, move, message)) {
+     if(!playMove(board, move, message)) {
           // fprintf(stderr, "Error: Invalid move supplied\n");
           return;
      }
-     boardPrint(chessBoard);
-     chessBoard->currentTurn = !chessBoard->currentTurn;
+
+     boardPrint(board);
+     board->currentTurn = !board->currentTurn;
+
+     Pos currTurnKing = findNthPiece(board, KING, 1);
+     Message temp;
+     if(isSquareContested(board, currTurnKing, temp)) {
+          if (board->currentTurn == WHITE)
+               board->isWhiteChecked = true;
+          else 
+               board->isBlackChecked = true;
+     } else {
+          board->isBlackChecked = board->isWhiteChecked = false;
+     }
+
+     // Check if legal move exists
+      if((board->currentTurn == BLACK && board->isBlackChecked) || board->isWhiteChecked) {
+
+               // loop through every piece on the board
+               for(size_t i = 1; i < 9; i++) {
+                    for(size_t j = 1; j < 9; j++) {
+                         // loop through every brute-forced move on the booard for that piece
+                         for(size_t k = 1; k < 9; k++) {
+                              for(size_t l = 1; l < 9; l++) {
+                                   Board tempBoard = *board;
+                                   Message tempBuffer;
+                                   
+                                   // starting piece is valid only if same team and not empty
+                                   Piece startPiece = getPieceAt(&tempBoard, i, j);
+                                   if(startPiece.isWhite != tempBoard.currentTurn
+                                   || startPiece.type != EMPTY) {
+                                        continue; 
+                                   }
+                                   Move move = createMove(i, j, k, l);
+
+                                   // If there is atleast 1 legal move
+                                   // legal move - valid move after which king is not in check
+                                   if(checkValidMove(&tempBoard, move, tempBuffer)) {
+                                        if(playMove(&tempBoard, move, tempBuffer)) {
+                                             return;
+                                   }
+                                   }
+                              }
+                         }
+                    }
+               }
+
+          // No legal moves; check-mate
+          board->isGameEnded = true;
+     }
+
 }
 
 void boardInit(Board *chessBoard)
@@ -182,4 +231,7 @@ void gameStart(Board* board) {
           gameRound(board, buffer, getInputMove(board, buffer));
      }
 
+     printf("%s", "Check-mate");
 }
+
+

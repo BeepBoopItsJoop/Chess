@@ -56,8 +56,8 @@ typedef struct {
      bool isBlackChecked;
 } Board;
 
-typedef char Message[100];
+Piece getPieceAt(const Board* board, int file, int rank);
 
-bool checkValidMove(Board *chessBoard, Move move, Message message);
+typedef char Message[100];
 
 #endif // PIECE_H

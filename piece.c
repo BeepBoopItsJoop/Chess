@@ -14,18 +14,18 @@ Move createMove(int startX, int startY, int endX, int endY) {
 bool checkValidPos(Pos pos) {
      if (pos.X < 1 || pos.X > 9 || pos.Y < 1 || pos.Y > 9)
      {
-          fprintf(stderr, "Error: Invalid out-of-bouns position supplied as argument.\n");
+          // fprintf(stderr, "Error: Invalid out-of-bouns position supplied as argument.\n");
           return false;
      }
      return true;
 }
 
-Piece* getPieceAt(Board* board, int file, int rank) {
+Piece getPieceAt(const Board* board, int file, int rank) {
      if (board == NULL)
      {
           fprintf(stderr, "Error: Invalid chess board.\n");
-          return NULL;
+          return (Piece){-1, -1};
      }
 
-     return &board->boardArray[rank-1][file-1];
+     return board->boardArray[rank-1][file-1];
 }

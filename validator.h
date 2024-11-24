@@ -3,7 +3,6 @@
 
 #include "piece.h"
 
-Piece* getPieceAt(Board* board, int file, int rank);
-
+bool checkValidMove(const Board *chessBoard, Move move, Message message);
 
 #endif // VALIDATOR_h
