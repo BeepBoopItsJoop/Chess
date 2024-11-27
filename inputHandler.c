@@ -40,9 +40,10 @@ Prompt promptMove()
      {
           fprintf(stderr, "Could not compile regex\n");
           regfree(&regex);
-          return (Prompt){-1, -1, -1, CASE_NONE};
+          return (Prompt){-1, -1, EMPTY, CASE_ERROR};
      }
 
+     Prompt prompt;
      while (1)
      {
           printf("Enter your move in algebraic notation: ");
@@ -58,12 +59,12 @@ Prompt promptMove()
           {
                if (strncmp(input, "O-O", INPUT_SIZE) == 0)
                {
-                    // TODO: Implement castling
+                    prompt = (Prompt){-1, -1, EMPTY, CASE_CASTLE_KINGSIDE};
                     break;
                }
                else if (strncmp(input, "O-O-O", INPUT_SIZE) == 0)
                {
-                    // TODO: ^
+                    prompt = (Prompt){-1, -1, EMPTY, CASE_CASTLE_QUEENSIDE};
                     break;
                }
 
@@ -84,11 +85,14 @@ Prompt promptMove()
                char rank = input[match.rm_eo - 1];
 
                // TODO: function for creating a prompt
-               return (Prompt){file - 'a' + 1, rank - '0', piece_type};
+
+               prompt = (Prompt){file - 'a' + 1, rank - '0', piece_type, CASE_NONE};
+               break;
 
                // TODO: implement optional en passant in prompt 
                // TODO: implement optional take(x) in prompt 
                // TODO: implement optional destination piece in prompt 
+               // TODO: implement promotion in prompt
           }
           else if (reti == REG_NOMATCH)
           {
@@ -98,11 +102,13 @@ Prompt promptMove()
           {
                regerror(reti, &regex, input, sizeof(input));
                fprintf(stderr, "Regex match failed: %s\n", input);
-               regfree(&regex);
-               return (Prompt){-1, -1, -1, CASE_NONE};
+               prompt = (Prompt){-1, -1, EMPTY, CASE_ERROR};
+               break;
           }
      }
 
      // Free memory allocated to the pattern buffer by regcomp()
      regfree(&regex);
+
+     return prompt;
 }

@@ -7,8 +7,8 @@ size_t getPieceCount(PieceType type) {
      return (pieceCount[type]);
 }
 
-Move createMove(int startX, int startY, int endX, int endY) {
-     return (Move){(Pos){startX, startY}, (Pos){endX, endY}};
+Move createMove(int startX, int startY, int endX, int endY, SpecialCase specialCase) {
+     return (Move){(Pos){startX, startY}, (Pos){endX, endY}, specialCase};
 }
 
 bool checkValidPos(Pos pos) {
@@ -24,7 +24,7 @@ Piece getPieceAt(const Board* board, int file, int rank) {
      if (board == NULL)
      {
           fprintf(stderr, "Error: Invalid chess board.\n");
-          return (Piece){-1, -1};
+          return (Piece){-1, 0};
      }
 
      return board->boardArray[rank-1][file-1];

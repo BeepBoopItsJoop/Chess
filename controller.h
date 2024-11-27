@@ -5,5 +5,4 @@
 
 void gameStart(Board* board);
 
-
 #endif // CONTROLLER_H

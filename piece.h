@@ -30,16 +30,17 @@ typedef struct {
 
 bool checkValidPos(Pos pos);
 
-typedef struct {
-     Pos start; 
-     Pos end; 
-} Move;
-
-Move createMove(int startX, int startY, int endX, int endY);
-
 typedef enum specialCases {
      CASE_ERROR, CASE_NONE, CASE_EN_PASSANT, CASE_CASTLE_KINGSIDE, CASE_CASTLE_QUEENSIDE
 } SpecialCase;
+
+typedef struct {
+     Pos start; 
+     Pos end;
+     SpecialCase specialCase;
+} Move;
+
+Move createMove(int startX, int startY, int endX, int endY, SpecialCase specialCase);
 
 typedef struct {
      int file;
@@ -54,7 +55,13 @@ typedef struct {
      bool isGameEnded;
      bool isWhiteChecked;
      bool isBlackChecked;
+     bool castlingImpossible[2][2];
 } Board;
+
+typedef enum {
+     CASTLE_KINGSIDE,
+     CASTLE_QUEENSIDE
+} CastleType;
 
 Piece getPieceAt(const Board* board, int file, int rank);
 
