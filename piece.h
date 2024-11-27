@@ -46,8 +46,10 @@ typedef struct {
      int file;
      int rank;
      PieceType type;
-     enum specialCases specialCase; 
+     SpecialCase specialCase; 
 } Prompt;
+
+Prompt createPrompt(int file, int rank, PieceType type, enum specialCases specialCase);
 
 typedef struct {
      Piece boardArray[8][8];

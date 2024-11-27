@@ -11,6 +11,10 @@ Move createMove(int startX, int startY, int endX, int endY, SpecialCase specialC
      return (Move){(Pos){startX, startY}, (Pos){endX, endY}, specialCase};
 }
 
+Prompt createPrompt(int file, int rank, PieceType type, SpecialCase specialCase) {
+     return (Prompt){file, rank, type, specialCase};
+}
+
 bool checkValidPos(Pos pos) {
      if (pos.X < 1 || pos.X > 9 || pos.Y < 1 || pos.Y > 9)
      {

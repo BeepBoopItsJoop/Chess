@@ -135,7 +135,7 @@ bool checkCastleConditions(const Board *board, Prompt input)
      // Check if squares between rook and king are empty
      for (int i = 1; i <= steps; ++i)
      {
-          if (getPieceAt(board, kingX + i * direction, y).type != EMPTY)
+          if (getPieceAt(board, kingX + (i * direction), y).type != EMPTY)
                return false;
      }
 

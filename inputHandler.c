@@ -24,12 +24,50 @@ enum pieces get_piece_type(char piece_char)
      }
 }
 
+const int INPUT_SIZE = 20;
+
+Prompt parsePrompt(const char* input, const regmatch_t match) {
+     if (strncmp(input, "O-O", INPUT_SIZE) == 0)
+     {
+          return (Prompt){-1, -1, EMPTY, CASE_CASTLE_KINGSIDE};
+     }
+     else if (strncmp(input, "O-O-O", INPUT_SIZE) == 0)
+     {
+          return (Prompt){-1, -1, EMPTY, CASE_CASTLE_QUEENSIDE};
+     }
+
+     char piece_char = input[0];
+     enum pieces piece_type;
+     // Determine if the move has a specific piece type (K, Q, R, B, N) or is a pawn move
+     if (piece_char == 'K' || piece_char == 'Q' || piece_char == 'R' ||
+          piece_char == 'B' || piece_char == 'N')
+     {
+          piece_type = get_piece_type(piece_char);
+          input++;
+     }
+     else
+     {
+          piece_type = PAWN;
+     }
+
+     char file = input[match.rm_eo - 2];
+     char rank = input[match.rm_eo - 1];
+
+     // TODO: function for creating a prompt
+
+     return (Prompt){file - 'a' + 1, rank - '0', piece_type, CASE_NONE};
+
+     // TODO: implement optional en passant in prompt 
+     // TODO: implement optional take(x) in prompt 
+     // TODO: implement optional destination piece in prompt 
+     // TODO: implement promotion in prompt
+}
+
 Prompt promptMove()
 {
-     const int INPUT_SIZE = 20;
-     const char *regex_pattern = "^(O-O-O|O-O|[KQRBN]?[a-h]?[1-8])$";
+     // const char *regex_pattern = "^(O-O-O|O-O|[KQRBN]?[a-h]?[1-8])$";
      // const char *regex_pattern = "^(O-O-O|O-O|[KQRBN]?[a-h]?[1-8]?[x]?[a-h][1-8](=[QRBN])?[+#]?)$";
-     //             better patten    ^([NBRQK])?([a-h])?([1-8])?(x)?([a-h][1-8])(=[NBRQK])?(\+|#)?$|^O-O(-O)?$/
+     const char *regex_pattern = "^([NBRQK])?([a-h])?([1-8])?(x)?([a-h][1-8])(=[NBRQK])?(\\+|#)?$|^O-O(-O)?$";
 
      char input[INPUT_SIZE];
      regex_t regex;
@@ -57,42 +95,8 @@ Prompt promptMove()
           // Regex matched, proceed to parse the input
           if (!reti)
           {
-               if (strncmp(input, "O-O", INPUT_SIZE) == 0)
-               {
-                    prompt = (Prompt){-1, -1, EMPTY, CASE_CASTLE_KINGSIDE};
-                    break;
-               }
-               else if (strncmp(input, "O-O-O", INPUT_SIZE) == 0)
-               {
-                    prompt = (Prompt){-1, -1, EMPTY, CASE_CASTLE_QUEENSIDE};
-                    break;
-               }
-
-               char piece_char = input[0];
-               enum pieces piece_type;
-               // Determine if the move has a specific piece type (K, Q, R, B, N) or is a pawn move
-               if (piece_char == 'K' || piece_char == 'Q' || piece_char == 'R' ||
-                   piece_char == 'B' || piece_char == 'N')
-               {
-                    piece_type = get_piece_type(piece_char);
-               }
-               else
-               {
-                    piece_type = PAWN;
-               }
-
-               char file = input[match.rm_eo - 2];
-               char rank = input[match.rm_eo - 1];
-
-               // TODO: function for creating a prompt
-
-               prompt = (Prompt){file - 'a' + 1, rank - '0', piece_type, CASE_NONE};
+               prompt = parsePrompt(input, match);
                break;
-
-               // TODO: implement optional en passant in prompt 
-               // TODO: implement optional take(x) in prompt 
-               // TODO: implement optional destination piece in prompt 
-               // TODO: implement promotion in prompt
           }
           else if (reti == REG_NOMATCH)
           {
