@@ -11,8 +11,8 @@ Move createMove(int startX, int startY, int endX, int endY, SpecialCase specialC
      return (Move){(Pos){startX, startY}, (Pos){endX, endY}, specialCase};
 }
 
-Prompt createPrompt(int file, int rank, PieceType type, SpecialCase specialCase) {
-     return (Prompt){file, rank, type, specialCase};
+Prompt createPrompt(int startfile, int startRank, int endFile, int endRank, PieceType type, SpecialCase specialCase) {
+     return (Prompt){startfile, startRank, endFile, endRank, type, specialCase};
 }
 
 bool checkValidPos(Pos pos) {

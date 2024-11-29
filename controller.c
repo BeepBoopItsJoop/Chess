@@ -204,9 +204,9 @@ Move getInputMove(const Board *board, Message buffer)
           for (size_t i = 1, count = getPieceCount(input.type); i <= count; i++)
           {
                start = findNthPiece(board, input.type, i);
-               if (checkValidMove(board, createMove(start.X, start.Y, input.file, input.rank, CASE_NONE), buffer))
+               if (checkValidMove(board, createMove(start.X, start.Y, input.endFile, input.endRank, CASE_NONE), buffer))
                {
-                    return createMove(start.X, start.Y, input.file, input.rank, CASE_NONE);
+                    return createMove(start.X, start.Y, input.endFile, input.endRank, CASE_NONE);
                }
           }
      }

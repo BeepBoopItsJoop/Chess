@@ -31,7 +31,8 @@ typedef struct {
 bool checkValidPos(Pos pos);
 
 typedef enum specialCases {
-     CASE_ERROR, CASE_NONE, CASE_EN_PASSANT, CASE_CASTLE_KINGSIDE, CASE_CASTLE_QUEENSIDE
+     CASE_ERROR = -1, CASE_NONE, CASE_CASTLE_KINGSIDE, CASE_CASTLE_QUEENSIDE, CASE_EN_PASSANT, 
+     CASE_PROMOTION_QUEEN, CASE_PROMOTION_ROOK, CASE_PROMOTION_BISHOP, CASE_PROMOTION_KNIGHT 
 } SpecialCase;
 
 typedef struct {
@@ -43,13 +44,20 @@ typedef struct {
 Move createMove(int startX, int startY, int endX, int endY, SpecialCase specialCase);
 
 typedef struct {
-     int file;
-     int rank;
+     int startFile;
+     int startRank;
+     int endFile;
+     int endRank;
      PieceType type;
      SpecialCase specialCase; 
 } Prompt;
 
-Prompt createPrompt(int file, int rank, PieceType type, enum specialCases specialCase);
+Prompt createPrompt(int startfile, int startRank, int endFile, int endRank, PieceType type, SpecialCase specialCase);
+
+typedef enum {
+     CASTLE_KINGSIDE,
+     CASTLE_QUEENSIDE
+} CastleType;
 
 typedef struct {
      Piece boardArray[8][8];
@@ -60,10 +68,6 @@ typedef struct {
      bool castlingImpossible[2][2];
 } Board;
 
-typedef enum {
-     CASTLE_KINGSIDE,
-     CASTLE_QUEENSIDE
-} CastleType;
 
 Piece getPieceAt(const Board* board, int file, int rank);
 

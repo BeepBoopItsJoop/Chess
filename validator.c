@@ -249,6 +249,7 @@ bool checkValidMoveQueen(const Board *chessBoard, Move m, Message message)
      return true;
 }
 
+// TODO: modify to include disambiguation using start file and rank
 bool checkValidMove(const Board *chessBoard, Move move, Message message)
 {
      if(message == NULL) {
