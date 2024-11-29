@@ -6,6 +6,7 @@
 
 // // Function to determine the piece based on the input character
 PieceType get_piece_type(char piece_char)
+PieceType get_piece_type(char piece_char)
 {
      switch (piece_char)
      {
@@ -27,7 +28,7 @@ PieceType get_piece_type(char piece_char)
 const int INPUT_SIZE = 20;
 
 Prompt parsePrompt(const char* input, const regmatch_t match) {
-     // TODO: Notation as follows:
+     // Notation as follows:
      // e3
      // Ne3
      // exd5
@@ -44,6 +45,7 @@ Prompt parsePrompt(const char* input, const regmatch_t match) {
      // Nf7#
      // Qf6#
      // *Piece* *startFile* *startRank* *x* *endFile* *endRank* *# or + or e.p."
+     // TODO: test edge cases
 
      int startRank = -1, startFile = -1;  
      int endRank = -1, endFile = -1;  
@@ -153,7 +155,6 @@ Prompt promptMove()
  
           regmatch_t match;
           reti = regexec(&regex, input, 1, &match, 0);
-          // Regex matched, proceed to parse the input
           if (!reti)
           {
                prompt = parsePrompt(input, match);
