@@ -6,7 +6,6 @@
 
 // // Function to determine the piece based on the input character
 PieceType get_piece_type(char piece_char)
-PieceType get_piece_type(char piece_char)
 {
      switch (piece_char)
      {
