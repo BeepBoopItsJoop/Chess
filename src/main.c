@@ -7,79 +7,134 @@
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
 
-int main(void) {
-     SDL_Surface* winSurface = NULL;
-     SDL_Window* window = NULL;
+bool init();
+void kill();
+bool loop();
 
+SDL_Window* window;
+SDL_Renderer* renderer;
+SDL_Texture* texture;
+
+bool init() {
      if (SDL_Init(SDL_INIT_VIDEO) < 0) {
           fprintf(stderr, "%s %s\n", "SDL initialization failed: ", SDL_GetError());
-          return 1;
+          return false;
      }
-     
-     window = SDL_CreateWindow("Chess", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
+
+     window = SDL_CreateWindow("Chess", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN);
      if (!window) {
           fprintf(stderr, "%s %s\n", "SDL creating window failed: ", SDL_GetError());
-          return 1;
+          return false;
      }
 
-     winSurface = SDL_GetWindowSurface(window);
-     if (!winSurface) {
-          fprintf(stderr, "%s %s\n", "SDL getting window surface failed: ", SDL_GetError());
-          return 1;
+     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+     if (!renderer) {
+          fprintf(stderr, "%s %s\n", "SDL creating renderer failed: ", SDL_GetError());
+          return false;
      }
-     
-     // white Screen
-     SDL_FillRect(winSurface, NULL, SDL_MapRGB(winSurface->format, 255, 255, 255));
-     
+
+     if(IMG_Init(IMG_INIT_PNG) < 0) {
+          fprintf(stderr, "%s %s\n", "IMG_Init  failed: ", SDL_GetError());
+          return false;
+     }
+
+
+     SDL_Surface* buffer = IMG_Load("assets/b-king.png");
+     if(!buffer) {
+          fprintf(stderr, "%s %s\n", "IMG_Load failed: ", SDL_GetError());
+          return false;
+     }
+
+     texture = SDL_CreateTextureFromSurface(renderer, buffer);
+     SDL_FreeSurface(buffer);
+     buffer = NULL;
+     if(!texture) {
+          fprintf(stderr, "%s %s\n", "SDL_CreateTextureFromSurface with SVG Surface failed ", SDL_GetError());
+          return false;
+     }
+
+     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+     SDL_RenderClear(renderer);
+     return true;
+}
+
+void kill() {
+     SDL_DestroyTexture(texture);
+     SDL_DestroyRenderer(renderer);
+     SDL_DestroyWindow(window);
+     texture = NULL;
+     window = NULL;
+     renderer = NULL;
+     IMG_Quit();
+     SDL_Quit();
+}
+
+bool loop() {
+     SDL_Event event;
+
+     SDL_SetRenderDrawColor(renderer, 234, 233, 226, 0);
+     SDL_RenderClear(renderer);
+
+     int width, height;
+     SDL_GetWindowSize(window, &width, &height);
 
      // Tiles
-     for(size_t i = 0; i < 8; i++) {
-          for(size_t j = 0; j < 8; j++) {
+     for (size_t i = 0; i < 8; i++) {
+          for (size_t j = 0; j < 8; j++) {
                SDL_Rect tileRect;
-               tileRect.y = i * WINDOW_HEIGHT/8;
-               tileRect.x = j * WINDOW_WIDTH/8;
-               tileRect.w = WINDOW_WIDTH/8;
-               tileRect.h = WINDOW_HEIGHT/8;
+               tileRect.x = j * width / 8;
+               tileRect.y = i * height / 8;
+               tileRect.w = width / 8;
+               tileRect.h = height / 8;
 
-               Uint32 currTileMapRGB;
-               if((i + j) % 2 == 0) {
-                    currTileMapRGB = SDL_MapRGB(winSurface->format, 234, 233, 226);
+
+               if ((i + j) % 2 == 0) {
+                    SDL_SetRenderDrawColor(renderer, 234, 233, 226, 255);
                } else {
-                    currTileMapRGB = SDL_MapRGB(winSurface->format, 38, 33, 35);
+                    SDL_SetRenderDrawColor(renderer, 38, 33, 35, 255);
                }
-
-               SDL_FillRect(winSurface, &tileRect, currTileMapRGB);
-          }
-     }
-     SDL_UpdateWindowSurface( window );
-
-
-
-
-     SDL_Event event;
-     int running = 1;
-     while (running) {
-          while (SDL_PollEvent(&event)) {
-               switch (event.type) {
-                    case SDL_QUIT:
-                         running = false;  
-                    break;
-                    case SDL_KEYDOWN:
-                         if(event.key.keysym.sym == SDLK_q) {
-                              running = false;
-                         }
-                    break;
-               }
+               SDL_RenderFillRect(renderer, &tileRect);
           }
      }
 
-     // Board chessBoard;
-     // gameStart(&chessBoard);
+     int tileHeight = height/ 8;
+     int tileWidth = width / 8;
+     
+     SDL_Rect dest;
+     int squareSize = (tileWidth < tileHeight) ? tileWidth : tileHeight;
+     dest.w = dest.h = squareSize;
+     dest.x = (tileWidth - squareSize) / 2;
+     dest.y = (tileHeight - squareSize) / 2;
+     SDL_RenderCopy(renderer, texture, NULL, &dest);
 
-     SDL_DestroyWindow(window);
-     window = NULL;
-     winSurface = NULL;
+     while (SDL_PollEvent(&event) != 0) {
+          switch (event.type) {
+               case SDL_QUIT:
+                    return false;
+               case SDL_KEYDOWN:
+                    if (event.key.keysym.sym == SDLK_q) {
+                         return false;
+                    }
+                    break;
+          }
+     }
 
-     SDL_Quit();
+     SDL_RenderPresent(renderer);
+     
+     return true;
+}
+
+int main(void) {
+     if (!init())
+          return 1;
+
+     while(loop()) {
+          SDL_Delay(10);
+     }
+
+     kill();
      return 0;
+
+     Board chessBoard;
+     gameStart(&chessBoard);
 }

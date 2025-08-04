@@ -12,6 +12,9 @@ find_package(SDL2_ttf REQUIRED)
 # Add include directory for headers
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
+# Assets
+file(COPY ${CMAKE_SOURCE_DIR}/assets DESTINATION ${CMAKE_BINARY_DIR})
+
 # Add source files
 file(GLOB SOURCES ${CMAKE_SOURCE_DIR}/src/*.c)
 
