@@ -4,8 +4,9 @@
 ## ~~Rendering with gpu boilerpalte code~~
 ## ~~Converting chessboard to new code~~
 ## ~~Loading in assets SVGs~~
-# Clean up
+# Refactor into C++
+# 
+# Refactor to allow for both terminal and GUI I/O
 ## Seperate display logic
 ## Cap FPS
-# Hooking up game logic to display 
-# Accepting input
+## Enable resizeable window while keeping 1:1 ratio for actual board

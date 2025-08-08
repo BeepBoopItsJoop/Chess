@@ -2,7 +2,7 @@
 #include <SDL_image.h>
 #include <stdio.h>
 
-#include "controller.h"
+#include "chess.h"
 
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
@@ -124,17 +124,19 @@ bool loop() {
      return true;
 }
 
-int main(void) {
-     if (!init())
-          return 1;
+int main(int argc, char* argv) {
+     // if (!init())
+     //      return 1;
 
-     while(loop()) {
-          SDL_Delay(10);
-     }
+     // while(loop()) {
+     //      SDL_Delay(10);
+     // }
 
-     kill();
+     Chess chessBoard;
+     chessBoard.Run();
+
+     // kill();
      return 0;
 
-     Board chessBoard;
-     gameStart(&chessBoard);
+
 }

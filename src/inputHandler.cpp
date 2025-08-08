@@ -2,25 +2,26 @@
 #include <string.h>
 #include <regex.h>
 
-#include "piece.h"
+#include "chess.h"
 
 // // Function to determine the piece based on the input character
 PieceType get_piece_type(char piece_char)
 {
+     using enum PieceType;
      switch (piece_char)
      {
      case 'K':
-          return KING;
+          return king;
      case 'Q':
-          return QUEEN;
+          return queen;
      case 'R':
-          return ROOK;
+          return rook;
      case 'B':
-          return BISHOP;
+          return bishop;
      case 'N':
-          return KNIGHT;
+          return knight;
      default:
-          return PAWN; // If no character, assume it's a pawn move
+          return pawn; // If no character, assume it's a pawn move
      }
 }
 
@@ -48,16 +49,18 @@ Prompt parsePrompt(const char* input, const regmatch_t match) {
 
      int startRank = -1, startFile = -1;  
      int endRank = -1, endFile = -1;  
-     PieceType type = PAWN;
-     SpecialCase specialCase = CASE_NONE;
+     PieceType type = PieceType::pawn;
+     SpecialCase specialCase = SpecialCase::none;
 
+     using enum PieceType;
+     using enum SpecialCase;
      if (strncmp(input, "O-O", INPUT_SIZE) == 0)
      {
-          return (Prompt){-1, -1, -1, -1, EMPTY, CASE_CASTLE_KINGSIDE};
+          return Prompt{-1, -1, -1, -1, empty, castle_kingside};
      }
      else if (strncmp(input, "O-O-O", INPUT_SIZE) == 0)
      {
-          return (Prompt){-1, -1, -1, -1, EMPTY, CASE_CASTLE_QUEENSIDE};
+          return Prompt{-1, -1, -1, -1, empty, castle_queenside};
      }
 
      if(input[0] == 'K' || input[0] == 'Q' || input[0] == 'R' || input[0] == 'B' || input[0] == 'N') {
@@ -96,17 +99,17 @@ Prompt parsePrompt(const char* input, const regmatch_t match) {
                PieceType promotionType = get_piece_type(input[0]);
                switch (promotionType)
                {
-               case QUEEN:
-                    specialCase = CASE_PROMOTION_QUEEN;
+               case queen:
+                    specialCase = promotion_queen;
                     break;
-               case ROOK:
-                    specialCase = CASE_PROMOTION_ROOK;
+               case rook:
+                    specialCase = promotion_rook;
                     break;
-               case BISHOP:
-                    specialCase = CASE_PROMOTION_BISHOP;
+               case bishop:
+                    specialCase = promotion_bishop;
                     break;
-               case KNIGHT:
-                    specialCase = CASE_PROMOTION_KNIGHT;
+               case knight:
+                    specialCase = promotion_knight;
                     break;
                }
                input++;
@@ -122,7 +125,7 @@ Prompt parsePrompt(const char* input, const regmatch_t match) {
           startRank = -1;
      }
      
-     return createPrompt(startFile, startRank, endFile, endRank, type, specialCase);
+     return Prompt{startFile, startRank, endFile, endRank, type, specialCase};
 }
 
 Prompt promptMove()
@@ -140,7 +143,7 @@ Prompt promptMove()
      {
           fprintf(stderr, "Could not compile regex\n");
           regfree(&regex);
-          return (Prompt){-1, -1, -1, -1, EMPTY, CASE_ERROR};
+          return Prompt{-1, -1, -1, -1, PieceType::empty, SpecialCase::error};
      }
 
      Prompt prompt;
@@ -167,7 +170,7 @@ Prompt promptMove()
           {
                regerror(reti, &regex, input, sizeof(input));
                fprintf(stderr, "Regex match failed: %s\n", input);
-               prompt = (Prompt){-1, -1, -1, -1, EMPTY, CASE_ERROR};
+               prompt = Prompt{-1, -1, -1, -1, PieceType::empty, SpecialCase::error};
                break;
           }
      }

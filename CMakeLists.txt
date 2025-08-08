@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
 project(Chess)
 
-set(CMAKE_C_STANDARD 99)
+# set(CMAKE_C_STANDARD 99)
+set(CMAKE_CXX_STANDARD 20) 
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # SDL and SDL Libraries
 find_package(SDL2 REQUIRED)
@@ -16,7 +18,7 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 file(COPY ${CMAKE_SOURCE_DIR}/assets DESTINATION ${CMAKE_BINARY_DIR})
 
 # Add source files
-file(GLOB SOURCES ${CMAKE_SOURCE_DIR}/src/*.c)
+file(GLOB SOURCES ${CMAKE_SOURCE_DIR}/src/*.cpp)
 
 # Create the executable
 add_executable(chess ${SOURCES})

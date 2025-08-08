@@ -1,9 +1,10 @@
 #ifndef DISPLAYER_H
 #define DISPLAYER_H
 
-#include "piece.h"
+#include "chess.h"
 
 // void boardPrint(const int board[8][8]);
-void boardPrint(Board* board);
+void boardPrint(Chess& board);
 
 #endif // DISPLAYER_H
+     

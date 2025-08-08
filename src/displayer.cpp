@@ -25,7 +25,7 @@ void printPieces(const Piece pieces[8]) {
      for(int i = 0; i < 8; i++) {
           printf("%c", '|');
           printf("%c", ' ');
-          printf("%s", chessPieces[pieces[i].isWhite][pieces[i].type]);
+          printf("%s", chessPieces[static_cast<int>(pieces[i].color)][static_cast<int>(pieces[i].type)]);
           printf("%c", ' ');
      }
      printf("%c", '|');
@@ -33,7 +33,7 @@ void printPieces(const Piece pieces[8]) {
  }
 
 // void boardPrint(const int board[8][8]) {
-void boardPrint(Board* board) {
+void boardPrint(Chess& board) {
      printf("%c", ' '); 
      for(int i = 0; i < 8; i++) {
           printf("%c", ' '); 
@@ -47,7 +47,7 @@ void boardPrint(Board* board) {
                printRow(i+2);
           }
           printf("%c", ' ');
-          printPieces(&board->boardArray[i][0]);
+          printPieces(&board.boardArray[i][0]);
      }
      printRow(1);
 
